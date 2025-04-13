@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOTSINUZB - Профессиональные Telegram боты на заказ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        telegram: {
+                            light: '#0088cc',
+                            DEFAULT: '#0088cc',
+                            dark: '#006699',
+                        },
+                        dark: {
+                            950: '#0b0f19',
+                            900: '#101826',
+                            800: '#17212b',
+                            700: '#1e293b',
+                        },
+                    },
+                    fontFamily: {
+                        poppins: ['Poppins', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0f19;
+            color: #f8fafc;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .telegram-btn {
+            background: linear-gradient(135deg, #0088cc, #00aced);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 170, 237, 0.2);
+        }
+
+        .telegram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 170, 237, 0.35);
+            background: linear-gradient(135deg, #0077b3, #0099e3);
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+        .tech-badge {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.25);
+        }
+
+        .message-in {
+            background: linear-gradient(135deg, #1e3a8a, #1e40af);
+            border-radius: 18px 18px 18px 4px;
+        }
+
+        .message-out {
+            background: linear-gradient(135deg, #075985, #0c4a6e);
+            border-radius: 18px 18px 4px 18px;
+        }
+
+        .terminal-line::after {
+            content: '|';
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .timeline-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 1.9rem;
+            top: 4rem;
+            height: calc(100% - 4rem);
+            width: 2px;
+            background: rgba(59, 130, 246, 0.3);
+            z-index: 0;
+        }
+
+        .scroll-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .custom-shape-divider-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+            transform: rotate(180deg);
+        }
+
+        .custom-shape-divider-bottom svg {
+            position: relative;
+            display: block;
+            width: calc(100% + 1.3px);
+            height: 120px;
+        }
+
+        .custom-shape-divider-bottom .shape-fill {
+            fill: #0f172a;
+        }
+
+        /* Mobile menu styles */
+        .mobile-menu {
+            transition: all 0.3s ease;
+            max-height: 0;
+            overflow: hidden;
+        }
+
+        .mobile-menu.open {
+            max-height: 500px;
+        }
+
+        /* Preloader */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0b0f19;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .preloader.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 3px solid #3b82f6;
+            border-radius: 50%;
+            display: inline-block;
+            position: relative;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+        }
+
+        .loader::after {
+            content: '';
+            box-sizing: border-box;
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #8b5cf6;
+            width: 16px;
+            height: 16px;
+            transform: translate(-50%, 50%);
+            border-radius: 50%;
+        }
+
+        @keyframes rotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Improved animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        /* Contact form styles */
+        .contact-input {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .contact-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+        }
+
+        /* Fixed timeline items */
+        .timeline-item {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <!-- Preloader -->
+    <div class="preloader">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="glass-card fixed top-0 w-full z-50 py-4 px-6">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fab fa-telegram text-3xl text-blue-400"></i>
+                <span class="text-2xl font-bold font-poppins">BOTS<span class="gradient-text">INUZB</span></span>
+            </div>
+
+            <div class="hidden md:flex space-x-8 items-center">
+                <a href="#services" class="text-gray-300 hover:text-white transition-colors duration-300">Услуги</a>
+                <a href="#portfolio" class="text-gray-300 hover:text-white transition-colors duration-300">Портфолио</a>
+                <a href="#technology" class="text-gray-300 hover:text-white transition-colors duration-300">Технологии</a>
+                <a href="#process" class="text-gray-300 hover:text-white transition-colors duration-300">Процесс</a>
+                <a href="#faq" class="text-gray-300 hover:text-white transition-colors duration-300">FAQ</a>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <a href="https://t.me/BOTSINUZB" target="_blank" class="telegram-btn px-6 py-2.5 rounded-full font-medium flex items-center space-x-2 group hidden md:flex">
+                    <i class="fab fa-telegram"></i>
+                    <span>Наш канал</span>
+                    <i class="fas fa-external-link-alt text-xs opacity-70 group-hover:opacity-100 transition"></i>
+                </a>
+
+                <!-- Mobile menu button -->
+                <button id="mobile-menu-button" class="md:hidden text-gray-300 hover:text-white focus:outline-none">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="mobile-menu md:hidden bg-dark-900 mt-4 rounded-lg">
+            <div class="px-4 py-3 space-y-4">
+                <a href="#services" class="block text-gray-300 hover:text-white transition-colors duration-300">Услуги</a>
+                <a href="#portfolio" class="block text-gray-300 hover:text-white transition-colors duration-300">Портфолио</a>
+                <a href="#technology" class="block text-gray-300 hover:text-white transition-colors duration-300">Технологии</a>
+                <a href="#process" class="block text-gray-300 hover:text-white transition-colors duration-300">Процесс</a>
+                <a href="#faq" class="block text-gray-300 hover:text-white transition-colors duration-300">FAQ</a>
+                <a href="https://t.me/BOTSINUZB" target="_blank" class="telegram-btn px-4 py-2 rounded-full font-medium flex items-center justify-center space-x-2 mt-2">
+                    <i class="fab fa-telegram"></i>
+                    <span>Наш канал</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-24 px-6">
+        <div class="absolute top-0 left-0 right-0 bottom-0 overflow-hidden z-0">
+            <div class="absolute top-1/4 -right-1/4 w-96 h-96 bg-blue-900/30 rounded-full filter blur-3xl opacity-20 -z-10"></div>
+            <div class="absolute bottom-1/2 -left-1/4 w-96 h-96 bg-purple-900/30 rounded-full filter blur-3xl opacity-20 -z-10"></div>
+            <div class="absolute top-28 right-40 w-32 h-32 bg-blue-500 rounded-full filter blur-3xl opacity-15 -z-10 animate-pulse"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-14 items-center relative z-10">
+            <div class="space-y-8">
+                <div class="inline-flex items-center px-4 py-2 rounded-full bg-white/5 text-sm font-medium text-blue-300 mb-4 border border-blue-900/50">
+                    <i class="fas fa-bolt mr-2"></i>
+                    <span>ПРОФЕССИОНАЛЬНАЯ РАЗРАБОТКА</span>
+                </div>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight font-poppins">
+                    <span class="text-white">Создаём</span> <br>
+                    <span class="gradient-text">Telegram боты</span> <br>
+                    <span class="text-white">для вашего бизнеса</span>
+                </h1>
+                <p class="text-lg text-gray-300 leading-relaxed max-w-2xl">
+                    BOTSINUZB создаёт Telegram ботов на заказ, которые автоматизируют процессы, увеличивают продажи и улучшают взаимодействие с клиентами.
+                </p>
+                <div class="flex flex-wrap gap-4 pt-6">
+                    <a href="#contact" class="telegram-btn px-6 py-3 rounded-full font-medium flex items-center space-x-3 text-lg">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>Заказать бота</span>
+                    </a>
+                    <a href="#portfolio" class="glass-card px-6 py-3 rounded-full font-medium flex items-center space-x-3 text-lg hover:bg-gray-800/60">
+                        <i class="fas fa-eye"></i>
+                        <span>Наши работы</span>
+                    </a>
+                </div>
+
+                <div class="flex items-center pt-12 space-x-4 text-sm text-gray-400">
+                    <div class="flex -space-x-3">
+
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-1">
+                            <div class="flex">
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="relative">
+                <div class="glass-card p-1 rounded-3xl relative animate-float shadow-2xl shadow-blue-900/20">
+                    <div class="absolute inset-0 rounded-3xl bg-gradient-to-br from-blue-500/10 to-purple-500/10"></div>
+                    <div class="relative bg-gray-900/80 rounded-2xl p-4 overflow-hidden">
+                        <div class="flex items-center justify-between px-2 py-2 border-b border-gray-800/50">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            </div>
+                            <div class="text-xs text-gray-400">bot.py</div>
+                            <div class="w-6"></div>
+                        </div>
+
+                        <div class="py-4 px-2 font-mono text-sm scroll-hide overflow-x-auto">
+                            <pre><code class="text-gray-300"><span class="text-blue-400">import</span> telebot <span class="text-blue-400">from</span> config <span class="text-blue-400">import</span> TOKEN
+
+bot = telebot.TeleBot(TOKEN)
+
+<span class="text-purple-400">@bot</span>.message_handler(commands=['start'])
+<span class="text-blue-400">def</span> <span class="text-yellow-400">start</span>(message):
+    bot.send_message(message.chat.id,
+                     <span class="text-green-400">"Привет! Я ваш новый телеграм бот"</span>)
+
+<span class="text-purple-400">@bot</span>.message_handler(content_types=['text'])
+<span class="text-blue-400">def</span> <span class="text-yellow-400">echo</span>(message):
+    bot.send_message(message.chat.id, message.text)
+
+<span class="text-blue-400">if</span> __name__ == <span class="text-green-400">'__main__'</span>:
+    print(<span class="text-green-400">'Бот запущен!'</span>)
+    bot.polling()</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="absolute -bottom-10 right-32 w-64 h-64 bg-blue-500 rounded-full filter blur-[100px] opacity-10 -z-10"></div>
+                <div class="absolute -top-10 left-10 w-64 h-64 bg-purple-500 rounded-full filter blur-[100px] opacity-10 -z-10"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="relative py-28 px-6 bg-gradient-to-b from-dark-950 to-dark-900">
+        <div class="custom-shape-divider-bottom">
+            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M1200 120L0 16.48 0 0 1200 0 1200 120z" class="shape-fill"></path>
+            </svg>
+        </div>
+
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold font-poppins mb-4">Наши <span class="gradient-text">услуги</span></h2>
+                <p class="text-lg text-gray-300 max-w-3xl mx-auto">Разрабатываем боты любого уровня сложности под ваши конкретные задачи</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Service 1 -->
+                <div class="glass-card p-8 rounded-2xl transition-all hover:-translate-y-2 hover:shadow-xl hover:shadow-blue-900/10 hover:border-blue-900/30 animate-fade-in-up" style="animation-delay: 0.1s">
+                    <div class="flex items-center justify-center w-14 h-14 rounded-xl bg-blue-900/20 text-blue-400 mb-6">
+                        <i class="fas fa-store text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold font-poppins mb-4">Боты для бизнеса</h3>
+                    <p class="text-gray-300 mb-6">Полноценные коммерческие решения для увеличения продаж и автоматизации работы с клиентами</p>
+                    <ul class="space-y-3 text-gray-400">
+                        <li class="flex items-center">
+                            <div class="w-5 h-5 rounded-lg bg-blue-900/30 flex items-center justify-center mr-3">
+                                <i class="fas fa-check text-blue-400 text-xs"></i>
+                            </div>
+                            <span>Онлайн-магазины</span>
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-5 h-5 rounded-lg bg-blue-900/30 flex items-center justify-center mr-3">
+                                <i class="fas fa-check text-blue-400 text-xs"></i>
+                            </div>
+                            <span>CRM-интеграция</span>
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-5 h-5 rounded-lg bg-blue-900/30 flex items-center justify-center mr-3">
+                                <i class="fas fa-check text-blue-400 text-xs"></i>
+                            </div>
+                            <span>Платёжные системы</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Service 2 -->
+                <div class="glass-card p-8 rounded-2xl transition-all hover:-translate-y-2 hover:shadow-xl hover:shadow-purple-900/10 hover:border-purple-900/30 animate-fade-in-up" style="animation-delay: 0.2s">
+                    <div class="flex items-center justify-center w-14 h-14 rounded-xl bg-purple-900/20 text-purple-400 mb-6">
+                        <i class="fas fa-cogs text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold font-poppins mb-4">Автоматизация</h3>
+                    <p class="text-gray-300 mb-6">Боты для автоматического выполнения рутинных задач и интеграции с другими сервисами</p>
+                    <ul class="space-y-3 text-gray-400">
+                        <li class="flex items-center">
+                            <div class="w-5 h-5 rounded-lg bg-purple-900/30 flex items-center justify-center mr-3">
+                                <i class="fas fa-check text-purple-400 text-xs"></i>
+                            </div>
+                            <span>Парсинг данных</span>
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-5 h-5 rounded-lg bg-purple-900/30 flex items-center justify-center mr-3">
+                                <i class="fas fa-check text-purple-400 text-xs"></i>
+                            </div>
+                            <span>Авто-уведомления</span>
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-5 h-5 rounded-lg bg-purple-900/30 flex items-center justify-center mr-3">
+                                <i class="fas fa-check text-purple-400 text-xs"></i>
+                            </div>
+                            <span>API-интеграция</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Service 3 -->
+                <div class="glass-card p-8 rounded-2xl transition-all hover:-translate-y-2 hover:shadow-xl hover:shadow-pink-900/10 hover:border-pink-900/30 animate-fade-in-up" style="animation-delay: 0.3s">
+                    <div class="flex items-center justify-center w-14 h-14 rounded-xl bg-pink-900/20 text-pink-400 mb-6">
+                        <i class="fas fa-gamepad text-2xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold font-poppins mb-4">Развлекательные боты</h3>
+                    <p class="text-gray-300 mb-6">Игровые и интерактивные боты для вовлечения пользователей и сообществ</p>
+                    <ul class="space-y-3 text-gray-400">
+                        <li class="flex items-center">
+                            <div class="w-5 h-5 rounded-lg bg-pink-900/30 flex items-center justify-center mr-3">
+                                <i class="fas fa-check text-pink-400 text-xs"></i>
+                            </div>
+                            <span>Мини-игры</span>
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-5 h-5 rounded-lg bg-pink-900/30 flex items-center justify-center mr-3">
+                                <i class="fas fa-check text-pink-400 text-xs"></i>
+                            </div>
+                            <span>Викторины</span>
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-5 h-5 rounded-lg bg-pink-900/30 flex items-center justify-center mr-3">
+                                <i class="fas fa-check text-pink-400 text-xs"></i>
+                            </div>
+                            <span>Чат-боты</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-16 px-6 bg-dark-800">
+        <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div class="text-center animate-fade-in-up" style="animation-delay: 0.1s">
+                <div class="text-4xl font-bold font-poppins text-blue-400 mb-2">10+</div>
+                <div class="text-gray-400 text-sm uppercase tracking-wider">Реализованных ботов</div>
+            </div>
+            <div class="text-center animate-fade-in-up" style="animation-delay: 0.2s">
+                <div class="text-4xl font-bold font-poppins text-purple-400 mb-2">70%</div>
+                <div class="text-gray-400 text-sm uppercase tracking-wider">Успешных проектов</div>
+            </div>
+            <div class="text-center animate-fade-in-up" style="animation-delay: 0.3s">
+                <div class="text-4xl font-bold font-poppins text-pink-400 mb-2">24/7</div>
+                <div class="text-gray-400 text-sm uppercase tracking-wider">Поддержка клиентов</div>
+            </div>
+            <div class="text-center animate-fade-in-up" style="animation-delay: 0.4s">
+                <div class="text-4xl font-bold font-poppins text-green-400 mb-2">10+</div>
+                <div class="text-gray-400 text-sm uppercase tracking-wider">Довольных клиентов</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="py-28 px-6 bg-dark-900">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold font-poppins mb-4">Наши <span class="gradient-text">работы</span></h2>
+                <p class="text-lg text-gray-300 max-w-3xl mx-auto">Примеры Telegram ботов, которые мы разработали для наших клиентов</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Bot 1 - Yustex Bot -->
+                <div class="glass-card rounded-2xl overflow-hidden transition-all hover:shadow-xl hover:-translate-y-2 hover:shadow-blue-900/20 border border-gray-800/30 animate-fade-in-up" style="animation-delay: 0.1s">
+                    <div class="p-6 pb-4 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-blue-900/10 to-transparent"></div>
+                        <div class="relative flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold font-poppins">Yustex Bot</h3>
+                            <span class="px-3 py-1 text-xs rounded-full tech-badge">Текстиль</span>
+                        </div>
+                        <p class="text-gray-300 mb-6 relative z-10">Бот для текстильной компании с каталогом товаров, корзиной и платежной системой</p>
+
+                        <div class="relative z-10 mb-6">
+                            <div class="flex flex-col space-y-3 bg-gray-800/50 rounded-xl p-3">
+                                <!-- Bot message -->
+                                <div class="flex">
+                                    <div class="message-in p-3 max-w-[80%]">
+                                        <div class="flex items-center mb-1">
+                                            <span class="font-medium text-blue-300 text-sm">Yustex Bot</span>
+                                            <span class="text-gray-400 text-xs ml-2">14:30</span>
+                                        </div>
+                                        <p class="text-sm">У нас новые поступления! Сезонная скидка 20% на все модели</p>
+                                    </div>
+                                </div>
+
+                                <!-- User message -->
+                                <div class="flex justify-end">
+                                    <div class="message-out p-3 max-w-[80%]">
+                                        <p class="text-sm">Покажите хлопковые рубашки</p>
+                                    </div>
+                                </div>
+
+                                <!-- Bot message -->
+                                <div class="flex">
+                                    <div class="message-in p-3 max-w-[80%]">
+                                        <div class="flex items-center mb-1">
+                                            <span class="font-medium text-blue-300 text-sm">Yustex Bot</span>
+                                            <span class="text-gray-400 text-xs ml-2">14:31</span>
+                                        </div>
+                                        <p class="text-sm">Вот наши хлопковые рубашки. Используйте кнопки ниже для выбора категории</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-10 flex justify-between items-center">
+                            <div class="flex space-x-2">
+                                <span class="px-2 py-1 text-xs rounded-full bg-blue-900/20 text-blue-400 border border-blue-900/30">Python</span>
+                                <span class="px-2 py-1 text-xs rounded-full bg-green-900/20 text-green-400 border border-green-900/30">PostgreSQL</span>
+                            </div>
+                            <a href="https://t.me/yustexbot" class="text-blue-500 hover:text-blue-300 text-sm font-medium">Демо <i class="fas fa-external-link-alt ml-1 text-xs"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bot 2 - Landshaft Creator Bot -->
+                <div class="glass-card rounded-2xl overflow-hidden transition-all hover:shadow-xl hover:-translate-y-2 hover:shadow-green-900/20 border border-gray-800/30 animate-fade-in-up" style="animation-delay: 0.2s">
+                    <div class="p-6 pb-4 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-green-900/10 to-transparent"></div>
+                        <div class="relative flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold font-poppins">Landshaft Bot</h3>
+                            <span class="px-3 py-1 text-xs rounded-full bg-green-900/20 text-green-400 border border-green-900/30">Услуги</span>
+                        </div>
+                        <p class="text-gray-300 mb-6 relative z-10">Бот для компании, предоставляющей услуги по ландшафтному дизайну и уходу за газонами</p>
+
+                        <div class="relative z-10 mb-6">
+                            <div class="flex flex-col space-y-3 bg-gray-800/50 rounded-xl p-3">
+                                <!-- Bot message -->
+                                <div class="flex">
+                                    <div class="message-in p-3 max-w-[80%]">
+                                        <div class="flex items-center mb-1">
+                                            <span class="font-medium text-green-300 text-sm">Landshaft Bot</span>
+                                            <span class="text-gray-400 text-xs ml-2">09:45</span>
+                                        </div>
+                                        <p class="text-sm">Выберите услугу: <br>1. Ландшафтный дизайн <br>2. Уход за газоном <br>3. Полив и удобрения</p>
+                                    </div>
+                                </div>
+
+                                <!-- User message -->
+                                <div class="flex justify-end">
+                                    <div class="message-out p-3 max-w-[80%]">
+                                        <p class="text-sm">Уход за газоном</p>
+                                    </div>
+                                </div>
+
+                                <!-- Bot message -->
+                                <div class="flex">
+                                    <div class="message-in p-3 max-w-[80%]">
+                                        <div class="flex items-center mb-1">
+                                            <span class="font-medium text-green-300 text-sm">Landshaft Bot</span>
+                                            <span class="text-gray-400 text-xs ml-2">09:46</span>
+                                        </div>
+                                        <p class="text-sm">Хорошо! Введите площадь газона в м² для расчёта стоимости</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-10 flex justify-between items-center">
+                            <div class="flex space-x-2">
+                                <span class="px-2 py-1 text-xs rounded-full bg-yellow-900/20 text-yellow-400 border border-yellow-900/30">Python</span>
+                                <span class="px-2 py-1 text-xs rounded-full bg-purple-900/20 text-purple-400 border border-purple-900/30">SQLite</span>
+                            </div>
+                            <a href="https://t.me/Landshaft_creatorbot" class="text-blue-400 hover:text-blue-300 text-sm font-medium">Демо <i class="fas fa-external-link-alt ml-1 text-xs"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bot 3 - StarsVinsko Bot -->
+                <div class="glass-card rounded-2xl overflow-hidden transition-all hover:shadow-xl hover:-translate-y-2 hover:shadow-pink-900/20 border border-gray-800/30 animate-fade-in-up" style="animation-delay: 0.3s">
+                    <div class="p-6 pb-4 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-pink-900/10 to-transparent"></div>
+                        <div class="relative flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold font-poppins">StarsVinsko</h3>
+                            <span class="px-3 py-1 text-xs rounded-full bg-pink-900/20 text-pink-400 border border-pink-900/30">Развлечения</span>
+                        </div>
+                        <p class="text-gray-300 mb-6 relative z-10">Интерактивный бот для раздачи звезд в Telegram с рейтингами и лидербордами</p>
+
+                        <div class="relative z-10 mb-6">
+                            <div class="flex flex-col space-y-3 bg-gray-800/50 rounded-xl p-3">
+                                <!-- Bot message -->
+                                <div class="flex">
+                                    <div class="message-in p-3 max-w-[80%]">
+                                        <div class="flex items-center mb-1">
+                                            <span class="font-medium text-pink-300 text-sm">StarsVinsko</span>
+                                            <span class="text-gray-400 text-xs ml-2">22:18</span>
+                                        </div>
+                                        <p class="text-sm">Вы получили 5 звёзд! Ваш баланс: 35 🌟. Нажмите /top чтобы увидеть лидеров</p>
+                                    </div>
+                                </div>
+
+                                <!-- User message -->
+                                <div class="flex justify-end">
+                                    <div class="message-out p-3 max-w-[80%]">
+                                        <p class="text-sm">/top</p>
+                                    </div>
+                                </div>
+
+                                <!-- Bot message -->
+                                <div class="flex">
+                                    <div class="message-in p-3 max-w-[80%]">
+                                        <div class="flex items-center mb-1">
+                                            <span class="font-medium text-pink-300 text-sm">StarsVinsko</span>
+                                            <span class="text-gray-400 text-xs ml-2">22:19</span>
+                                        </div>
+                                        <div class="text-sm">
+                                            <p class="font-medium">🏆 Топ пользователей:</p>
+                                            <p>1. @user1 - 150 🌟</p>
+                                            <p>2. @user2 - 120 🌟</p>
+                                            <p>3. @user3 - 95 🌟</p>
+                                            <p class="mt-1">Вы на 8 месте!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="relative z-10 flex justify-between items-center">
+                            <div class="flex space-x-2">
+                                <span class="px-2 py-1 text-xs rounded-full bg-yellow-900/20 text-yellow-400 border border-yellow-900/30">Python</span>
+                                <span class="px-2 py-1 text-xs rounded-full bg-purple-900/20 text-purple-400 border border-purple-900/30">SQLite</span>
+                            </div>
+                            <a href="https://t.me/StarsVinskoBot" class="text-blue-400 hover:text-blue-300 text-sm font-medium">Демо <i class="fas fa-external-link-alt ml-1 text-xs"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-16">
+                <a href="https://t.me/byfeyk228" target="_blank" class="telegram-btn px-6 py-3 rounded-full font-medium inline-flex items-center space-x-3">
+                    <i class="fab fa-telegram"></i>
+                    <span>Больше примеров в нашем канале</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Section -->
+    <section id="technology" class="py-28 px-6 bg-dark-950">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold font-poppins mb-4">Наши <span class="gradient-text">технологии</span></h2>
+                <p class="text-lg text-gray-300 max-w-3xl mx-auto">Используем современные инструменты для создания надежных и эффективных ботов</p>
+            </div>
+
+            <div class="grid grid-cols-3 md:grid-cols-5 gap-6">
+                <div class="glass-card p-4 rounded-xl flex flex-col items-center transition hover:-translate-y-2 animate-fade-in-up" style="animation-delay: 0.1s">
+                    <img src="https://cdn-icons-png.flaticon.com/512/5968/5968350.png" alt="Python" class="h-12 w-12 object-contain mb-3">
+                    <span class="font-medium text-sm">Python</span>
+                </div>
+                <div class="glass-card p-4 rounded-xl flex flex-col items-center transition hover:-translate-y-2 animate-fade-in-up" style="animation-delay: 0.2s">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2772/2772128.png" alt="MongoDB" class="h-12 w-12 object-contain mb-3">
+                    <span class="font-medium text-sm">MongoDB</span>
+                </div>
+                <div class="glass-card p-4 rounded-xl flex flex-col items-center transition hover:-translate-y-2 animate-fade-in-up" style="animation-delay: 0.3s">
+                    <img src="https://cdn-icons-png.flaticon.com/512/5968/5968342.png" alt="PostgreSQL" class="h-12 w-12 object-contain mb-3">
+                    <span class="font-medium text-sm">PostgreSQL</span>
+                </div>
+                <div class="glass-card p-4 rounded-xl flex flex-col items-center transition hover:-translate-y-2 animate-fade-in-up" style="animation-delay: 0.4s">
+                    <img src="https://cdn-icons-png.flaticon.com/512/888/888859.png" alt="Redis" class="h-12 w-12 object-contain mb-3">
+                    <span class="font-medium text-sm">Redis</span>
+                </div>
+                <div class="glass-card p-4 rounded-xl flex flex-col items-center transition hover:-translate-y-2 animate-fade-in-up" style="animation-delay: 0.5s">
+                    <img src="https://cdn-icons-png.flaticon.com/512/919/919853.png" alt="Docker" class="h-12 w-12 object-contain mb-3">
+                    <span class="font-medium text-sm">Docker</span>
+                </div>
+            </div>
+
+            <div class="mt-16 text-center">
+                <p class="text-gray-400 mb-6">Наши боты легко интегрируются с популярными сервисами:</p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <div class="glass-card px-4 py-2 rounded-lg flex items-center animate-fade-in-up" style="animation-delay: 0.1s">
+                        <img src="https://cdn-icons-png.flaticon.com/512/5968/5968885.png" alt="Telegram" class="h-5 mr-2">
+                        <span>Telegram API</span>
+                    </div>
+                    <div class="glass-card px-4 py-2 rounded-lg flex items-center animate-fade-in-up" style="animation-delay: 0.2s">
+                        <img src="https://cdn-icons-png.flaticon.com/512/217/217853.png" alt="Click" class="h-5 mr-2">
+                        <span>Click</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section id="process" class="py-28 px-6 bg-dark-800">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold font-poppins mb-4">Как мы <span class="gradient-text">работаем</span></h2>
+                <p class="text-lg text-gray-300 max-w-3xl mx-auto">Четкий процесс разработки для гарантированного результата</p>
+            </div>
+
+            <div class="space-y-12 relative">
+                <!-- Timeline item 1 -->
+                <div class="timeline-item relative pl-20">
+                    <div class="absolute left-0 top-0 flex items-center justify-center w-12 h-12 rounded-full bg-blue-900/20 text-blue-400 border border-blue-900/30 z-10">
+                        <div class="w-8 h-8 flex items-center justify-center">
+                            <i class="fas fa-comment-alt text-lg"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold font-poppins mb-2">Обсуждение проекта</h3>
+                    <p class="text-gray-300">Мы подробно обсуждаем ваши требования, цели и ожидания от бота. Определяем основные функции и технические детали.</p>
+                </div>
+
+                <!-- Timeline item 2 -->
+                <div class="timeline-item relative pl-20">
+                    <div class="absolute left-0 top-0 flex items-center justify-center w-12 h-12 rounded-full bg-purple-900/20 text-purple-400 border border-purple-900/30 z-10">
+                        <div class="w-8 h-8 flex items-center justify-center">
+                            <i class="fas fa-file-alt text-lg"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold font-poppins mb-2">Проектирование </h3>
+                    <p class="text-gray-300">Создаем техническое задание, проектируем архитектуру бота и разрабатываем пользовательский интерфейс.</p>
+                </div>
+
+                <!-- Timeline item 3 -->
+                <div class="timeline-item relative pl-20">
+                    <div class="absolute left-0 top-0 flex items-center justify-center w-12 h-12 rounded-full bg-pink-900/20 text-pink-400 border border-pink-900/30 z-10">
+                        <div class="w-8 h-8 flex items-center justify-center">
+                            <i class="fas fa-code text-lg"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold font-poppins mb-2">Разработка и тестирование</h3>
+                    <p class="text-gray-300">Разрабатываем бота по согласованному ТЗ. Проводим внутреннее тестирование и предоставляем вам доступ к демо-версии.</p>
+                </div>
+
+                <!-- Timeline item 4 -->
+                <div class="timeline-item relative pl-20">
+                    <div class="absolute left-0 top-0 flex items-center justify-center w-12 h-12 rounded-full bg-green-900/20 text-green-400 border border-green-900/30 z-10">
+                        <div class="w-8 h-8 flex items-center justify-center">
+                            <i class="fas fa-rocket text-lg"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold font-poppins mb-2">Запуск и поддержка</h3>
+                    <p class="text-gray-300">Запускаем бота в работу. Оказываем техническую поддержку и помогаем с обучением сотрудников.</p>
+                </div>
+            </div>
+
+            <div class="mt-16 text-center">
+                <a href="#contact" class="telegram-btn px-6 py-3 rounded-full font-medium inline-flex items-center space-x-3">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Начать проект</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-28 px-6 bg-dark-900">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold font-poppins mb-4">Частые <span class="gradient-text">вопросы</span></h2>
+                <p class="text-lg text-gray-300 max-w-3xl mx-auto">Ответы на наиболее популярные вопросы о наших Telegram ботах</p>
+            </div>
+
+            <div class="space-y-4">
+                <!-- FAQ Item 1 -->
+                <div class="glass-card rounded-xl overflow-hidden animate-fade-in-up" style="animation-delay: 0.1s">
+                    <button class="faq-toggle w-full flex justify-between items-center text-left p-6">
+                        <h3 class="text-lg font-medium">Сколько стоит разработка Telegram бота?</h3>
+                        <i class="fas fa-chevron-down text-blue-400 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-content px-6 pb-6 text-gray-300 hidden">
+                        <p>Стоимость разработки бота зависит от множества факторов:</p>
+                        <ul class="list-disc pl-5 space-y-2 mt-2">
+                            <li>Сложность функционала (простой бот от $5, средний $25-50, сложные решения от $100)</li>
+                            <li>Необходимость интеграции с другими сервисами (платежные системы и т.д.)</li>
+                            <li>Количество пользователей (влияет на серверную часть)</li>
+                        </ul>
+                        <p class="mt-3">После обсуждения проекта мы предоставим точную оценку стоимости с разбивкой по этапам.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="glass-card rounded-xl overflow-hidden animate-fade-in-up" style="animation-delay: 0.2s">
+                    <button class="faq-toggle w-full flex justify-between items-center text-left p-6">
+                        <h3 class="text-lg font-medium">Какой срок разработки бота?</h3>
+                        <i class="fas fa-chevron-down text-blue-400 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-content px-6 pb-6 text-gray-300 hidden">
+                        <p>Сроки разработки варьируются в зависимости от сложности проекта:</p>
+                        <ul class="list-disc pl-5 space-y-2 mt-2">
+                            <li><strong>Простые боты</strong> (например, информационные или автоответчики) - 3-5 дней</li>
+                            <li><strong>Боты средней сложности</strong> (магазины, системы бронирования) - 1-2 недели</li>
+                            <li><strong>Сложные решения</strong> (CRM-интеграция, мультиигровые платформы) - от 1 месяца</li>
+                        </ul>
+                        <p class="mt-3">Мы всегда согласовываем реалистичные сроки на этапе оценки проекта и строго им следуем.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="glass-card rounded-xl overflow-hidden animate-fade-in-up" style="animation-delay: 0.3s">
+                    <button class="faq-toggle w-full flex justify-between items-center text-left p-6">
+                        <h3 class="text-lg font-medium">Какие гарантии вы предоставляете?</h3>
+                        <i class="fas fa-chevron-down text-blue-400 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-content px-6 pb-6 text-gray-300 hidden">
+                        <p>Мы предлагаем комплексные гарантии на все наши проекты:</p>
+                        <ul class="list-disc pl-5 space-y-2 mt-2">
+                            <li><strong>Гарантия на код</strong> - 2 месяца бесплатного исправления любых технических проблем</li>
+                            <li><strong>Техническая поддержка</strong> - помощь и консультации после запуска</li>
+                            <li><strong>Этапность оплата</strong> - оплата производится по согласованным этапам после их приемки</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="glass-card rounded-xl overflow-hidden animate-fade-in-up" style="animation-delay: 0.4s">
+                    <button class="faq-toggle w-full flex justify-between items-center text-left p-6">
+                        <h3 class="text-lg font-medium">Можно ли доработать бота после запуска?</h3>
+                        <i class="fas fa-chevron-down text-blue-400 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-content px-6 pb-6 text-gray-300 hidden">
+                        <p>Да, мы предлагаем различные варианты сопровождения проектов:</p>
+                        <ul class="list-disc pl-5 space-y-2 mt-2">
+                            <li><strong>Разовые доработки</strong> - внесение изменений по мере необходимости с почасовой оплатой</li>
+                            <li><strong>Абонентское обслуживание</strong> - ежемесячные обновления и приоритетная поддержка</li>
+                            <li><strong>Полный цикл развития</strong> - поэтапное расширение функционала по согласованному плану</li>
+                        </ul>
+                        <p class="mt-3">Все наши боты разрабатываются с учетом возможного масштабирования.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-28 px-6 bg-dark-950">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold font-poppins mb-4">Свяжитесь <span class="gradient-text">с нами</span></h2>
+                <p class="text-lg text-gray-300 max-w-3xl mx-auto">Готовы обсудить ваш проект? Оставьте заявку и мы свяжемся с вами в ближайшее время</p>
+            </div>
+
+            <div class="glass-card p-8 rounded-2xl">
+                <form id="contact-form" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="name" class="block text-gray-300 mb-2">Ваше имя</label>
+                            <input type="text" id="name" name="name" class="contact-input w-full px-4 py-3 rounded-lg focus:outline-none" required>
+                        </div>
+                        <div>
+                            <label for="email" class="block text-gray-300 mb-2">Email или Telegram</label>
+                            <input type="text" id="email" name="email" class="contact-input w-full px-4 py-3 rounded-lg focus:outline-none" required>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="project" class="block text-gray-300 mb-2">Опишите ваш проект</label>
+                        <textarea id="project" name="project" rows="5" class="contact-input w-full px-4 py-3 rounded-lg focus:outline-none" required></textarea>
+                    </div>
+
+                    <div class="pt-4">
+                        <button type="submit" class="telegram-btn w-full px-6 py-4 rounded-full font-medium text-lg flex items-center justify-center space-x-3">
+                            <i class="fas fa-paper-plane"></i>
+                            <span>Отправить заявку</span>
+                        </button>
+                    </div>
+                </form>
+
+                <div id="form-success" class="hidden mt-6 p-4 bg-green-900/20 text-green-400 rounded-lg border border-green-900/30">
+                    <div class="flex items-center">
+                        <i class="fas fa-check-circle mr-3"></i>
+                        <span>Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div class="glass-card p-6 rounded-xl">
+                    <div class="flex items-center justify-center w-14 h-14 rounded-full bg-blue-900/20 text-blue-400 mb-4 mx-auto">
+                        <i class="fas fa-phone-alt text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-poppins mb-2">Телефон</h3>
+                    <a href="tel:+998999999999" class="text-gray-300 hover:text-blue-400 transition">+999 99 999 99 99</a>
+                </div>
+
+                <div class="glass-card p-6 rounded-xl">
+                    <div class="flex items-center justify-center w-14 h-14 rounded-full bg-purple-900/20 text-purple-400 mb-4 mx-auto">
+                        <i class="fas fa-envelope text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-poppins mb-2">Email</h3>
+                    <a href="mailto:info@botsinuzb.com" class="text-gray-300 hover:text-blue-400 transition">botsinuzb@gmail.com</a>
+                </div>
+
+                <div class="glass-card p-6 rounded-xl">
+                    <div class="flex items-center justify-center w-14 h-14 rounded-full bg-pink-900/20 text-pink-400 mb-4 mx-auto">
+                        <i class="fab fa-telegram text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-poppins mb-2">Telegram</h3>
+                    <a href="https://t.me/BOTSINUZB" target="_blank" class="text-gray-300 hover:text-blue-400 transition">@BOTSINUZB</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="bg-dark-950 py-16 px-6 border-t border-gray-800/30">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fab fa-telegram text-2xl text-blue-400"></i>
+                        <h3 class="text-xl font-bold font-poppins">BOTS<span class="gradient-text">INUZB</span></h3>
+                    </div>
+                    <p class="text-gray-400 mb-6">Профессиональная разработка Telegram ботов на заказ с 2024 года</p>
+                    <div class="flex space-x-4">
+                        <a href="https://t.me/BOTSINUZB" target="_blank" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-300 hover:text-blue-400 transition">
+                            <i class="fab fa-telegram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-300 hover:text-pink-400 transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-300 hover:text-blue-500 transition">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-lg font-bold font-poppins mb-4 text-gray-200">Услуги</h4>
+                    <ul class="space-y-3">
+                        <li><a href="https://t.me/feyk228" class="text-gray-400 hover:text-blue-400 transition">Боты для бизнеса</a></li>
+                        <li><a href="https://t.me/feyk228" class="text-gray-400 hover:text-blue-400 transition">Автоматизация</a></li>
+                        <li><a href="https://t.me/feyk228" class="text-gray-400 hover:text-blue-400 transition">Развлекательные боты</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-lg font-bold font-poppins mb-4 text-gray-200">Компания</h4>
+                    <ul class="space-y-3">
+                        <li><a href="https://t.me/feyk228" class="text-gray-400 hover:text-blue-400 transition">Портфолио</a></li>
+                        <li><a href="https://t.me/feyk228" class="text-gray-400 hover:text-blue-400 transition">Процесс работы</a></li>
+                        <li><a href="https://t.me/feyk228" class="text-gray-400 hover:text-blue-400 transition">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-lg font-bold font-poppins mb-4 text-gray-200">Контакты</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li class="flex items-start">
+                            <i class="fas fa-phone-alt text-blue-400 mr-3 mt-1"></i>
+                            <a href="tel:+998999999999">+999 99 999 99 99</a>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-envelope text-blue-400 mr-3 mt-1"></i>
+                            <a href="mailto:info@botsinuzb.com">botsinuzb@gmail.com</a>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt text-blue-400 mr-3 mt-1"></i>
+                            <span>Ташкент, Узбекистан</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fab fa-telegram text-blue-400 mr-3 mt-1"></i>
+                            <a href="https://t.me/BOTSINUZB" target="_blank">@BOTSINUZB</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800/50 mt-16 pt-8 text-center text-gray-500 text-sm">
+                <p>© 2025 BOTSINUZB. Все права не защищены xD</p>
+                <div class="mt-4 flex justify-center space-x-6">
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to top button -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 w-12 h-12 glass-card rounded-full flex items-center justify-center text-blue-400 border border-gray-800/50 opacity-0 invisible transition-all duration-300 hover:bg-gray-800/30 hover:text-blue-300">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <script>
+        // Preloader
+        window.addEventListener('load', function() {
+            const preloader = document.querySelector('.preloader');
+            setTimeout(() => {
+                preloader.classList.add('fade-out');
+
+                // Remove preloader after animation completes
+                setTimeout(() => {
+                    preloader.style.display = 'none';
+                }, 500);
+            }, 1000);
+        });
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('open');
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('open');
+            });
+        });
+
+        // FAQ toggle functionality
+        document.querySelectorAll('.faq-toggle').forEach(button => {
+            button.addEventListener('click', () => {
+                const content = button.parentElement.querySelector('.faq-content');
+                const icon = button.querySelector('i');
+
+                content.classList.toggle('hidden');
+                icon.classList.toggle('rotate-180');
+            });
+        });
+
+        // Back to top button
+        const backToTopButton = document.getElementById('back-to-top');
+
+        function toggleBackToTop() {
+            if (window.scrollY > 300) {
+                backToTopButton.classList.remove('opacity-0', 'invisible');
+                backToTopButton.classList.add('opacity-100', 'visible');
+            } else {
+                backToTopButton.classList.remove('opacity-100', 'visible');
+                backToTopButton.classList.add('opacity-0', 'invisible');
+            }
+        }
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Contact form submission
+        const contactForm = document.getElementById('contact-form');
+        const formSuccess = document.getElementById('form-success');
+
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                // Here you would typically send the form data to your server
+                // For demo purposes, we'll just show the success message
+
+                // Reset form
+                contactForm.reset();
+
+                // Show success message
+                formSuccess.classList.remove('hidden');
+
+                // Hide success message after 5 seconds
+                setTimeout(() => {
+                    formSuccess.classList.add('hidden');
+                }, 5000);
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            toggleBackToTop();
+
+            // Smooth scroll for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const target = document.querySelector(targetId);
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+
+                        // Update URL without page reload
+                        if (targetId !== '#') {
+                            history.pushState(null, null, targetId);
+                        }
+                    }
+                });
+            });
+
+            // Back to top button events
+            window.addEventListener('scroll', toggleBackToTop);
+            backToTopButton.addEventListener('click', scrollToTop);
+
+            // Animate elements on scroll
+            const animateOnScroll = () => {
+                const elements = document.querySelectorAll('.glass-card, .timeline-item');
+
+                elements.forEach(element => {
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const screenPosition = window.innerHeight / 1.2;
+
+                    if (elementPosition < screenPosition) {
+                        element.classList.add('visible');
+                    }
+                });
+            };
+
+            // Run on scroll
+            window.addEventListener('scroll', animateOnScroll);
+            window.addEventListener('load', animateOnScroll);
+        });
+    </script>
+</body>
+</html>
